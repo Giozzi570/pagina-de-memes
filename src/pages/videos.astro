@@ -1,0 +1,134 @@
+---
+import Header from '../components/header.astro';
+import background from '../assets/background.svg';
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+<Header />
+<img id="background" src={background.src} alt="" fetchpriority="high" />
+<main class="bg-white w-11/12 m-auto my-5 rounded-lg shadow-xl shadow-black flex flex-col">
+    <h2 class="text-center text-2xl">Videos para reirse</h2>
+    <div class="container">
+      <video data-src="/meme0.mp4" class="m-3 rounded-xl video-en-pausa" controls></video>
+      <video data-src="/chillguy.mp4" class="m-3 rounded-xl video-en-pausa" controls></video>
+      <video data-src="/cris.mp4"  class="m-3 rounded-xl video-en-pausa" controls></video>
+      <video data-src="/meme0.mp4"  class="m-3 rounded-xl video-en-pausa" controls></video>
+      <video data-src="/meme0.mp4" class="m-3 rounded-xl video-en-pausa" controls></video>
+      <video data-src="/meme0.mp4" class="m-3 rounded-xl video-en-pausa" controls></video>
+      <video data-src="/meme0.mp4" class="m-3 rounded-xl video-en-pausa" controls></video>
+      <video data-src="/meme0.mp4" class="m-3 rounded-xl video-en-pausa" controls></video>
+      <video data-src="/meme0.mp4" class="m-3 rounded-xl video-en-pausa" controls></video>
+    </div>
+  </main>
+</Layout>
+
+<script>
+const videos = document.querySelectorAll('video[data-src]');
+const videos1 = document.querySelectorAll('video');
+videos.forEach((video) => {
+  // Set the `src` attribute from `data-src`
+  const videoSrc = video.getAttribute('data-src');
+  if (!videoSrc) return;
+
+  video.setAttribute('src', videoSrc);
+  video.preload = 'auto';
+
+  // Create a canvas to capture the first frame
+  const canvas = document.createElement('canvas');
+
+  video.addEventListener('loadedmetadata', () => {
+    // Set canvas dimensions based on video intrinsic dimensions
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+  });
+
+  video.addEventListener('canplay', () => {
+    const ctx = canvas.getContext('2d');
+
+    // Pause the video and draw the first frame
+    video.pause();
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    // Generate and set the poster from the first frame
+    const posterDataURL = canvas.toDataURL('image/jpeg');
+    video.setAttribute('poster', posterDataURL);
+  });
+
+  // Error handling
+  video.addEventListener('error', (e) => {
+    console.error(`Error loading video: ${videoSrc}`, e);
+  });
+});
+
+videos1.forEach((video) => {
+  video.addEventListener('click', () => {
+    // Cambiar la clase del video al hacer clic
+    if (video.classList.contains('video-en-pausa')) {
+      video.classList.remove('video-en-play'); 
+      video.classList.remove('video-en-pausa');// Quitar la clase si ya está aplicada
+    } else {
+      video.classList.add('video-en-pausa'); // Agregar la clase si no está
+    }
+
+    // Si quieres que solo un video pueda tener la clase "selected":
+    // Descomenta esta parte si es necesario
+    /*
+    videos.forEach((vid) => {
+      if (vid !== video) {
+        vid.classList.remove('selected');
+      }
+    });
+    */
+  });
+});
+
+</script>
+<style>
+  #background {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		z-index: -1;
+		filter: blur(50px);
+	}
+  h2{
+    font-weight: 700;
+    font-size: 30px;
+    color: #151516;
+	}
+	#f-1{
+		font-size: 20px;
+		text-align: center;
+		margin-bottom: 24px;
+		color: #222226;
+		text-align: left;
+	}
+	#f-2{
+		font-size: 30px;
+		font-weight: 800;
+		text-align: center;
+		color:black;
+		margin-bottom: 24px;
+	}
+
+	.container{
+		justify-items: center;
+		justify-content: center;
+		display: grid;
+		grid-template-columns: repeat(auto-fit,400px);
+		gap: 20px;
+	}
+  video{
+    height: 400px;
+    width: 400px;
+  }
+  .video-en-pausa{
+    object-fit: cover;
+  }
+  .video-en-play{
+
+  }
+</style>
